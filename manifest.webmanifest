@@ -1,0 +1,15 @@
+{
+  "name": "答案くみたて",
+  "short_name": "答案くみたて",
+  "description": "憲法・民法総論・刑法総論の事例で、問題提起→規範→あてはめ→結論を組み立てる1日5問",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3efe4",
+  "theme_color": "#f3efe4",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
