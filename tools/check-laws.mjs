@@ -5,7 +5,7 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const G = require('../data.js');
 const LAWNUM = { 憲法: '昭和二十一年憲法', 民法: '明治二十九年法律第八十九号', 刑法: '明治四十年法律第四十五号' };
-const strip = (x) => x.replace(/<[^>]+>/g, '').replace(/\s+/g, '');
+const strip = (x) => x.replace(/<[^>]*>/g, '').replace(/[<>]/g, '').replace(/\s+/g, ''); // 照らすための文字だけを残す（画面には出さない。残った < > も消す）
 const cache = new Map();
 async function article(law, n, p) {
   const k = `${law}:${n}`;
