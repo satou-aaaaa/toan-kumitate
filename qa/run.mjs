@@ -51,6 +51,8 @@ const PIN = "m_93:1:4"; // 第1回の1問目（変わったら過去の日の問
   const longWhy = [], longLook = [];
   for (const k of G.KINDS) { if ([...k.why].length > 130) longWhy.push(k.id); if ([...k.look].length > 45) longLook.push(k.id); }
   check("なぜは130字以内・ヒントは45字以内（一文を短く）", !longWhy.length && !longLook.length, longWhy.concat(longLook).join(","));
+  const okBench = Object.entries(G.SRC).filter(([id]) => id.startsWith("h_")).every(([, [n]]) => /^最高裁 (昭和|平成|令和)\d+年\d+月\d+日 (大法廷|第[一二三]小法廷)(判決|決定)（.+）$/.test(n));
+  check("判例の名前は「最高裁 年月日 法廷 判決・決定（事件名）」の形（年月日・法廷は判例ページの表示を写す。CodeRabbit #1 で法廷名のちがいが見つかった）", okBench);
   const used = new Set(G.KINDS.flatMap((k) => k.src)), okSrc = [...used].every((id) => G.SRC[id]) && Object.entries(G.SRC).filter(([id]) => used.has(id)).map(([, v]) => v).every(([n, u]) => n && /^https:\/\/(laws\.e-gov\.go\.jp\/law\/|www\.courts\.go\.jp\/hanrei\/\d+\/detail2\/index\.html$)/.test(u));
   check("使う出典は e-Gov 法令検索と裁判所の裁判例（判例ごとのページ）だけ（確かめ中の判例は PENDING に置き、使わない）", okSrc);
   const hsrc = G.KINDS.filter((k) => /判例/.test(k.rule) && !k.src.some((s) => s.startsWith("h_"))).map((k) => k.id);
@@ -263,6 +265,21 @@ try {
       const ok = await z.evaluate((K) => { const s = __tk.load(); s.runs.e = { mode: "e", date: __tk.todayKey(), list: ["m_94|1", "m_93|1"], res: [{ m: 0 }, { m: 0 }], cur: null, id: "e1" }; localStorage.setItem(K, JSON.stringify(s)); const ml = __tk.setMore(() => []); try { __tk.play("e"); return true; } catch (e) { return String(e); } finally { __tk.setMore(ml); } }, KEY);
       check("とことんで足せる問題が無くても固まらずに終える", ok === true && await z.locator("#eres").count() === 1, String(ok));
       await z.context().close();
+    }
+    {
+      // 保存に失敗したタブ（メモリ）と保存済みの記録を合わせるとき（CodeRabbit #1）
+      const r = await q.evaluate((K) => {
+        const base = { v: 1, tut: true, days: {}, hdays: {}, adays: {}, dex: {}, kofi: {}, ach: {}, ebest: 0 }, d = __tk.todayKey();
+        const run = (cur) => ({ mode: "e", id: "same", date: d, list: ["m_94|1", "m_93|1"], res: [], cur });
+        localStorage.setItem(K, JSON.stringify({ ...base, t: 1, runs: { e: run({ i: 0, tag: "m_94|1", wrong: [], hints: 0, st: 0, hs: 0 }) } }));
+        __tk.setMem(JSON.stringify({ ...base, t: 2, runs: { e: null } }));
+        const quit = __tk.load().runs.e;
+        localStorage.setItem(K, JSON.stringify({ ...base, t: 1, runs: { e: run({ i: 0, tag: "m_94|1", wrong: [], hints: 3, st: 0, hs: 2 }) } }));
+        __tk.setMem(JSON.stringify({ ...base, t: 2, runs: { e: run({ i: 0, tag: "m_94|1", wrong: ["0:x"], hints: 0, st: 0, hs: 0 }) } }));
+        const c = __tk.load().runs.e.cur; __tk.setMem(null);
+        return [!quit, c.hints, c.wrong.join()];
+      }, KEY);
+      check("保存に失敗したあと：新しい側で降りたとことんを戻さない・同じ問題のヒントとまちがいは両方を残す", r[0] === true && r[1] === 3 && r[2] === "0:x", JSON.stringify(r));
     }
     check("記録の文字を HTML として出さない", await q.locator("#xss, #xss2, #xss3").count() === 0);
     await q.context().close();

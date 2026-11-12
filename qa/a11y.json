@@ -3,6 +3,8 @@
     { "name": "今日の5問", "click": ["#go-d"] },
     { "name": "練習", "click": ["#go-p"] },
     { "name": "論点帳", "click": ["#go-dex"] },
+    { "name": "カレンダー", "click": ["#go-cal"] },
+    { "name": "実績", "click": ["#go-ach"] },
     { "name": "このゲームについて", "click": ["#f-about"] }
   ]
 }

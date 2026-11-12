@@ -436,10 +436,15 @@ function load() {
   s.runs = Object.assign({}, n.runs);
   for (const m of new Set([...Object.keys(ra), ...Object.keys(rb)])) {
     const x = ra[m], y = rb[m];
+    if (m === "e" && n.runs && n.runs.e === null) continue; // 新しい側で降りた（null）なら、古い側の続きを戻さない
     if (x === undefined || y === undefined) { if (x || y) s.runs[m] = x || y; continue; }
     if (!x || !y) { const r = x || y; if (!r || bank(s, r) || doneOf(r)) continue; const bd = bookOf(s, r.mode); if (!bd || !bd[r.date]) s.runs[m] = r; continue; }
     if (x.id !== y.id && x.date !== y.date) { const [w, l] = x.date > y.date ? [x, y] : [y, x]; bank(s, l); s.runs[m] = w; }
-    else if (x.id === y.id) { const px = prog(x), py = prog(y); s.runs[m] = px > py ? x : py > px ? y : n.runs[m]; }
+    else if (x.id === y.id) {
+      const px = prog(x), py = prog(y), w = px > py ? x : py > px ? y : n.runs[m], l = w === x ? y : x;
+      s.runs[m] = Object.assign({}, w);
+      if (w.cur && l.cur && w.cur.i === l.cur.i && w.cur.tag === l.cur.tag) s.runs[m].cur = Object.assign({}, w.cur, { hints: Math.max(w.cur.hints || 0, l.cur.hints || 0), wrong: [...new Set([...(w.cur.wrong || []), ...(l.cur.wrong || [])])] }); // 同じ問題ならヒント・まちがいを減らさない（keep と同じ）
+    }
   }
   return tidy(s);
 }
@@ -872,7 +877,7 @@ function about() {
   $("back").onclick = home; bindFooter(); toTop();
 }
 
-window.__tk = { randomTags, idsOf, mode: () => MODE, load, save, todayKey, dayNo, lateDays, ACH, achGot, nextAch, tally, shareText, streak, endlessList, moreList, ERAMP, TIPS, cur: () => cur, play: (m) => { if (m) MODE = m; play(); }, home, cal, book, about, EPOCH, KEY, G, start: startRun, setMore: (f) => { const o = moreHook; moreHook = f; return o; } };
+window.__tk = { setMem: (v) => { mem = v; }, randomTags, idsOf, mode: () => MODE, load, save, todayKey, dayNo, lateDays, ACH, achGot, nextAch, tally, shareText, streak, endlessList, moreList, ERAMP, TIPS, cur: () => cur, play: (m) => { if (m) MODE = m; play(); }, home, cal, book, about, EPOCH, KEY, G, start: startRun, setMore: (f) => { const o = moreHook; moreHook = f; return o; } };
 home();
 if ("serviceWorker" in navigator && location.protocol === "https:" && /github\.io$/.test(location.hostname)) navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>

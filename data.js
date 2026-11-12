@@ -26,7 +26,7 @@
     h_fugakuren: ["最高裁 昭和44年12月24日 大法廷判決（京都府学連事件）", "https://www.courts.go.jp/hanrei/51765/detail2/index.html"],
     h_horiki: ["最高裁 昭和57年7月7日 大法廷判決（堀木訴訟）", "https://www.courts.go.jp/hanrei/55154/detail2/index.html"],
     h_shinrin: ["最高裁 昭和62年4月22日 大法廷判決（森林法共有林分割制限違憲判決）", "https://www.courts.go.jp/hanrei/55203/detail2/index.html"],
-    h_s450922: ["最高裁 昭和45年9月22日 第一小法廷判決（不実の登記の承認と94条2項の類推）", "https://www.courts.go.jp/hanrei/54141/detail2/index.html"],
+    h_s450922: ["最高裁 昭和45年9月22日 第三小法廷判決（不実の登記の承認と94条2項の類推）", "https://www.courts.go.jp/hanrei/54141/detail2/index.html"],
     h_s410420: ["最高裁 昭和41年4月20日 大法廷判決（時効完成後の債務の承認）", "https://www.courts.go.jp/hanrei/57740/detail2/index.html"],
     h_nanko: ["最高裁 平成2年11月20日 第三小法廷決定（大阪南港事件）", "https://www.courts.go.jp/app/hanrei_jp/search1"],
     h_s441204: ["最高裁 昭和44年12月4日 第一小法廷判決（防衛行為の相当性）", "https://www.courts.go.jp/hanrei/50938/detail2/index.html"],

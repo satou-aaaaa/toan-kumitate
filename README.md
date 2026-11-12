@@ -19,4 +19,4 @@
 
 ## 作り方
 
-`index.html`（画面）と `data.js`（論点と問題の作り方）だけで動きます。検査は `node qa/run.mjs`。
+`index.html`（画面）・`data.js`（論点と問題の作り方）・`depth.js`（自信と復習）・`transfer.js`（引き継ぎ）を同じフォルダに置くと動きます。検査は `node qa/run.mjs`。
