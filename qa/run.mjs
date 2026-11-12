@@ -234,8 +234,8 @@ try {
   check("ヒント2のあとに残ったまちがいを選ぶと、正しい札だけが残る（消した札が戻らない。saibanin-shikumi #1）", await p.locator(".ch.ng").count() === 2 && await p.locator(".ch:not(.ng)").count() === 1 && await p.evaluate(() => { const c = __tk.cur(), st = c.P.steps[c.st]; const b = document.querySelector(".ch:not(.ng)"); return !!b && !b.disabled && st.opts[+b.dataset.j] === st.ans; }));
   await p.reload(); await p.waitForTimeout(200);
   check("とことんは閉じても続きから", (await p.textContent("#go-e")).includes("続きから"));
-  await p.click("#go-e"); await p.click("#quit"); await p.waitForTimeout(150);
-  check("「ここで降りる」で終わり、一度で組めた数（2問）が自己ベストに残る", (await mem(p)).ebest === 2 && (await p.textContent("#eres")).includes("4問") && !("e" in (await mem(p)).runs && (await mem(p)).runs.e));
+  await p.click("#go-e"); await solve(p); await p.click("#quit"); await p.waitForTimeout(150);
+  check("組み終えた直後でも「ここで降りる」が効き、一度で組めた数（2問）が自己ベストに残る（kyuyo-meisai 1bebfdc）", (await mem(p)).ebest === 2 && (await p.textContent("#eres")).includes("5問") && !("e" in (await mem(p)).runs && (await mem(p)).runs.e));
   {
     const r = await p.evaluate(() => { const K = __tk.G, bad = []; for (let n = 0; n < 300; n++) { const l = __tk.endlessList(), more = l.concat(__tk.moreList(l)); const ks = more.map((t) => K.keyOf(K.make(t))); if (new Set(ks).size !== ks.length) bad.push("重なり"); if (more.some((t, i) => i && t.split("|")[0] === more[i - 1].split("|")[0])) bad.push("同じ論点が続く"); if (l.length !== 60 || more.length !== 100) bad.push("数" + l.length + "/" + more.length); } return bad; });
     check("とことんの並び300回：60問＋足した40問で同じ問題も同じ論点の連続も無い（game-dev.md F6）", r.length === 0, r.slice(0, 3).join(","));
