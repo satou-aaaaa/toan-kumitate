@@ -1465,12 +1465,16 @@ function saveWarn(on) { let b = document.getElementById("savewarn"); const W = "
 // 保存の前に読み直す（別のタブで進めた記録を消さない）
 function save(fn) { const s = load(); fn(s); s.t = Math.max(Date.now(), (s.t || 0) + 1); const j = JSON.stringify(s); try { localStorage.setItem(KEY, j); mem = null; saveWarn(false); } catch (e) { mem = j; saveWarn(true); } return s; }
 function streak(days) { return Core.streak(days); } // 続けて遊んだ日数（共通部品 game-core。壊れた記録・constructor などの名前を日に数えない）
+// part:playedDays:begin（shared-workflows の template/parts/index/playedDays.js の写し。ここでは直さない。node scripts/sync-template.mjs で写す）
 const playedDays = (s) => new Set([...Object.keys(s.days), ...Object.keys(s.adays)]).size;
+// part:playedDays:end
 const solvedAll = (s) => Object.values(s.dex).reduce((a, b) => a + (+b || 0), 0);
 const cleanOf = (r) => r.res.filter((x) => x.m === 0).length;
 // 取りこぼした日：今日より前の7日のうち、今日の5問もあとからも遊んでいない日（新しい順。第1回より前は無い）
 const LATE = 7;
+// part:lateDays:begin（shared-workflows の template/parts/index/lateDays.js の写し。ここでは直さない。node scripts/sync-template.mjs で写す）
 function lateDays(s, k = todayKey()) { const out = []; let d = k; for (let i = 0; i < LATE; i++) { d = prevDay(d); if (d < EPOCH) break; if (!s.days[d] && !s.adays[d]) out.push(d); } return out; }
+// part:lateDays:end
 
 // ---- 実績：いまの記録から毎回数える（新しく残すのは結果で知らせ終えた印 ach だけ）。[id, 名前, 条件, 種類, 数え方, 目標] ----
 const subDone = (s, sub) => Object.keys(s.dex).filter((k) => G.BY[k] && G.BY[k].s === sub && s.dex[k] > 0).length;
@@ -1499,13 +1503,17 @@ const ACH = [
 ];
 const AGRP = ["腕前", "集める", "続ける"];
 const AUNIT = { clean: "日", hard: "日", days: "日", played: "日", late: "日", kinds: "論点", ken: "論点", min: "論点", kei: "論点", solved: "問", ebest: "問" };
+// part:achGot:begin（shared-workflows の template/parts/index/achGot.js の写し。ここでは直さない。node scripts/sync-template.mjs で写す）
 const achGot = (s) => { const t = tally(s); return ACH.filter((a) => t[a[4]] >= a[5]).map((a) => a[0]); };
+// part:achGot:end
 // あと少しの実績：まだの実績のうち、いちばん目標に近いもの1つ（ゴールに近いほど人はがんばる。Kivetz ほか 2006）
+// part:nextAch:begin（shared-workflows の template/parts/index/nextAch.js の写し。ここでは直さない。node scripts/sync-template.mjs で写す）
 function nextAch(s) {
   const t = tally(s); let best = null;
   for (const a of ACH) { const n = t[a[4]]; if (n <= 0 || n >= a[5]) continue; const r = n / a[5], left = a[5] - n; if (!best || r > best.r || (r === best.r && left < best.left)) best = { id: a[0], name: a[1], left, unit: AUNIT[a[4]] || "", r }; }
   return best;
 }
+// part:nextAch:end
 
 // ---- 画面 ----
 function toast(t) { Core.toast(t); } // 知らせの帯（共通部品 game-core。読み上げにも届け、重ねて出さない）
@@ -1845,6 +1853,7 @@ function book() {
   document.querySelectorAll(".book button").forEach((b) => (b.onclick = () => startRun("p", b.dataset.k)));
   bindFooter(); toTop();
 }
+// part:achView:begin（shared-workflows の template/parts/index/achView.js の写し。ここでは直さない。node scripts/sync-template.mjs で写す）
 function achView() {
   Core.screens.mark("achView"); // 「戻る」でホームへ（sync-template の migrateBack）
   const s = load(), t = tally(s), got = achGot(s);
@@ -1854,10 +1863,12 @@ function achView() {
     ${footer()}`;
   $("back").onclick = home; bindFooter(); toTop();
 }
+// part:achView:end
 // 遊んだ日のカレンダー：今日の5問の日は★（まちがいの少なさ）、あとから遊んだ日は ↺、取りこぼした過去7日は押すとあとから遊べる
 const ymOf = Core.ymOf;
 const ymAdd = Core.ymAdd;
 const lvOf = (rec) => { const t = rec && Array.isArray(rec.m) ? rec.m.reduce((a, b) => a + b, 0) : 9; return t === 0 ? 3 : t <= 2 ? 2 : 1; };
+// part:cal:begin（shared-workflows の template/parts/index/cal.js の写し。ここでは直さない。node scripts/sync-template.mjs で写す）
 function cal(ym) {
   Core.screens.mark("cal"); // 「戻る」でホームへ（sync-template の migrateBack）
   const s = load(), k = todayKey(), late = lateDays(s, k), st = streak(s.days);
@@ -1883,6 +1894,7 @@ function cal(ym) {
   document.querySelectorAll(".cal .miss").forEach((b) => (b.onclick = () => (lateDays(load()).includes(b.dataset.k) ? startRun("a", b.dataset.k) : cal(ym))));
   bindFooter(); toTop();
 }
+// part:cal:end
 // 法律の相談にはしない。答案の型の出どころと、条文・判例の出どころを書く
 function about() {
   Core.screens.mark("about"); // 「戻る」でホームへ（sync-template の migrateBack）
